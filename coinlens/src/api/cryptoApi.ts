@@ -10,10 +10,14 @@ export const cryptoApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "https://api.coingecko.com/api/v3/",
   }),
+  refetchOnMountOrArgChange: false,
+  refetchOnFocus: false,
+  refetchOnReconnect: false,
   endpoints: (builder) => ({
     getTopCoins: builder.query<CoinMarket[], void>({
       query: () =>
         "coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1",
+      keepUnusedDataFor: 300,
     }),
     getCoinById: builder.query<CoinDetails, string>({
       query: (coinId) => `coins/${coinId}`,

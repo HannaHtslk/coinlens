@@ -1,5 +1,7 @@
 import { useGetTopCoinsQuery } from "../api/cryptoApi";
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   Box,
   Table,
@@ -16,6 +18,8 @@ import {
 } from "@mui/material";
 
 const DashboardPage = () => {
+  const navigate = useNavigate();
+
   const { data, isLoading, error } = useGetTopCoinsQuery();
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<
@@ -95,7 +99,19 @@ const DashboardPage = () => {
           <TableBody>
             {filteredAndSortedData.map((coin) => (
               <TableRow key={coin.id}>
-                <TableCell>{coin.name}</TableCell>
+                <TableCell
+                  sx={{
+                    cursor: "pointer",
+                    color: "primary.main",
+                    fontWeight: 500,
+                    "&:hover": {
+                      textDecoration: "underline",
+                    },
+                  }}
+                  onClick={() => navigate(`/coin/${coin.id}`)}
+                >
+                  {coin.name}
+                </TableCell>
                 <TableCell align="right">
                   ${coin.current_price.toLocaleString()}
                 </TableCell>

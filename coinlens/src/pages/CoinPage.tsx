@@ -81,6 +81,7 @@ const CoinPage = () => {
         <Stack direction="row" spacing={2} mb={2}>
           <Button
             variant={days === 7 ? "contained" : "outlined"}
+            disabled={days === 7}
             onClick={() => setDays(7)}
           >
             7d
@@ -88,6 +89,7 @@ const CoinPage = () => {
 
           <Button
             variant={days === 30 ? "contained" : "outlined"}
+            disabled={days === 30}
             onClick={() => setDays(30)}
           >
             30d
