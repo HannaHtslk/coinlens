@@ -84,6 +84,34 @@ const PortfolioPage = () => {
     <Box>
       <Box
         sx={{
+          display: "grid",
+          gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+          gap: 2,
+          mb: 3,
+        }}
+      >
+        <Paper sx={{ p: 2 }}>
+          <Typography variant="body2" color="text.secondary">
+            Total Value
+          </Typography>
+          <Typography variant="h5">${totalValue.toLocaleString()}</Typography>
+        </Paper>
+
+        <Paper sx={{ p: 2 }}>
+          <Typography variant="body2" color="text.secondary">
+            Total P / L
+          </Typography>
+          <Typography
+            variant="h5"
+            sx={{ color: totalPnl >= 0 ? "success.main" : "error.main" }}
+          >
+            ${totalPnl.toLocaleString()}
+          </Typography>
+        </Paper>
+      </Box>
+
+      <Box
+        sx={{
           display: "flex",
           gap: 3,
           flexDirection: { xs: "column", md: "row" },
@@ -94,7 +122,12 @@ const PortfolioPage = () => {
             <Typography variant="h6" gutterBottom>
               Portfolio Allocation
             </Typography>
-            <Box sx={{ width: "100%", height: 450 }}>
+            <Box
+              sx={{
+                width: "100%",
+                height: { xs: 300, md: 450 },
+              }}
+            >
               <ResponsiveContainer>
                 <PieChart>
                   <Pie
@@ -118,7 +151,13 @@ const PortfolioPage = () => {
                       value !== undefined ? `$${value.toLocaleString()}` : ""
                     }
                   />
-                  <Legend verticalAlign="bottom" height={80} />
+                  <Legend
+                    verticalAlign="bottom"
+                    height={80}
+                    wrapperStyle={{
+                      fontSize: "0.75rem",
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </Box>
@@ -126,8 +165,13 @@ const PortfolioPage = () => {
         </Box>
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <TableContainer component={Paper}>
-            <Table>
+          <TableContainer
+            component={Paper}
+            sx={{
+              overflowX: "auto",
+            }}
+          >
+            <Table size="small">
               <TableHead>
                 <TableRow>
                   <TableCell>Coin</TableCell>
@@ -135,7 +179,12 @@ const PortfolioPage = () => {
                   <TableCell align="right">Price (USD)</TableCell>
                   <TableCell align="right">Value (USD)</TableCell>
                   <TableCell align="right">P/L (USD)</TableCell>
-                  <TableCell align="right">P/L %</TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{ display: { xs: "none", md: "table-cell" } }}
+                  >
+                    P/L %
+                  </TableCell>{" "}
                   <TableCell />
                 </TableRow>
               </TableHead>
@@ -170,12 +219,12 @@ const PortfolioPage = () => {
                     <TableCell
                       align="right"
                       sx={{
+                        display: { xs: "none", md: "table-cell" },
                         color: item.pnl >= 0 ? "success.main" : "error.main",
                       }}
                     >
-                      ${item.pnl.toLocaleString()}
+                      {item.pnlPercent.toFixed(2)}%
                     </TableCell>
-
                     <TableCell
                       align="right"
                       sx={{
@@ -197,33 +246,6 @@ const PortfolioPage = () => {
                     </TableCell>
                   </TableRow>
                 ))}
-
-                <TableRow
-                  sx={{
-                    backgroundColor: "action.hover",
-                    "& td": {
-                      fontWeight: 600,
-                      fontSize: "1rem",
-                    },
-                  }}
-                >
-                  <TableCell>Total</TableCell>
-                  <TableCell align="right"></TableCell>
-                  <TableCell align="right"></TableCell>
-                  <TableCell align="right">
-                    ${totalValue.toLocaleString()}
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    sx={{
-                      color: totalPnl >= 0 ? "success.main" : "error.main",
-                    }}
-                  >
-                    ${totalPnl.toLocaleString()}
-                  </TableCell>
-                  <TableCell align="right"></TableCell>
-                  <TableCell />
-                </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
