@@ -5,7 +5,12 @@ export const cryptoApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "https://api.coingecko.com/api/v3/",
   }),
-  endpoints: () => ({}),
+  endpoints: (builder) => ({
+    getTopCoins: builder.query<any[], void>({
+      query: () =>
+        "coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1",
+    }),
+  }),
 });
 
-export const {} = cryptoApi;
+export const { useGetTopCoinsQuery } = cryptoApi;
