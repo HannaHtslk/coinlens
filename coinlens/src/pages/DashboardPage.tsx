@@ -1,4 +1,4 @@
-import { useGetTopCoinsQuery } from '../api/cryptoApi';
+import { useGetTopCoinsQuery } from "../api/cryptoApi";
 
 const DashboardPage = () => {
     const { data, isLoading, error } = useGetTopCoinsQuery();
@@ -9,13 +9,34 @@ const DashboardPage = () => {
     return (
         <div>
             <h1>Market</h1>
-            <ul>
-                {data?.map((coin) => (
-                    <li key={coin.id}>
-                        {coin.name} — ${coin.current_price}
-                    </li>
-                ))}
-            </ul>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th align="left">Name</th>
+                        <th align="right">Price (USD)</th>
+                        <th align="right">24h %</th>
+                        <th align="right">Market Cap</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {data?.map((coin) => (
+                        <tr key={coin.id}>
+                            <td>{coin.name}</td>
+                            <td align="right">
+                                ${coin.current_price.toLocaleString()}
+                            </td>
+                            <td align="right">
+                                {coin.price_change_percentage_24h?.toFixed(2)}%
+                            </td>
+                            <td align="right">
+                                ${coin.market_cap.toLocaleString()}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };
