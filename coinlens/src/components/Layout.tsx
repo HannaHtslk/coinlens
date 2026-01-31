@@ -1,18 +1,44 @@
-import { Outlet, Link } from "react-router-dom";
+import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
+import { NavLink } from "react-router-dom";
 
 const Layout = () => {
-    return (
-        <div>
-            <nav style={{ padding: "16px", borderBottom: "1px solid #ccc" }}>
-                <Link to="/dashboard">Dashboard</Link>{" | "}
-                <Link to="/portfolio">Portfolio</Link>
-            </nav>
+  return (
+    <AppBar position="static" elevation={0}>
+      <Toolbar>
+        <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
+          CoinLens
+        </Typography>
 
-            <main style={{ padding: "16px" }}>
-                <Outlet />
-            </main>
-        </div>
-    );
+        <Box>
+          <Button
+            component={NavLink}
+            to="/"
+            sx={{
+              color: "inherit",
+              "&.active": {
+                color: "primary.main",
+              },
+            }}
+          >
+            Dashboard
+          </Button>
+
+          <Button
+            component={NavLink}
+            to="/portfolio"
+            sx={{
+              color: "inherit",
+              "&.active": {
+                color: "primary.main",
+              },
+            }}
+          >
+            Portfolio
+          </Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
 };
 
 export default Layout;

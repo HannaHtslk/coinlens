@@ -22,6 +22,7 @@ const CoinPage = () => {
 
   const { id } = useParams<{ id: string }>();
   const [days, setDays] = useState<7 | 30>(7);
+  const [justAdded, setJustAdded] = useState(false);
 
   const { data, isLoading, error } = useGetCoinByIdQuery(id!);
 
@@ -59,21 +60,30 @@ const CoinPage = () => {
         <Typography>
           Market cap: ${data.market_data.market_cap.usd.toLocaleString()}
         </Typography>
-
         <Button
           variant="contained"
+          color={justAdded ? "success" : "primary"}
           sx={{ mt: 2 }}
-          onClick={() =>
+          onClick={() => {
+            if (justAdded) return;
+
             dispatch(
               addToPortfolio({
                 coinId: id!,
                 name: data.name,
                 amount: 1,
+                investedUsd: data.market_data.current_price.usd,
               })
-            )
-          }
+            );
+
+            setJustAdded(true);
+
+            setTimeout(() => {
+              setJustAdded(false);
+            }, 2000);
+          }}
         >
-          Add to portfolio
+          {justAdded ? "Added to portfolio" : "Add to portfolio"}
         </Button>
       </Paper>
 

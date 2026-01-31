@@ -19,8 +19,9 @@ import {
 
 const DashboardPage = () => {
   const navigate = useNavigate();
-
-  const { data, isLoading, error } = useGetTopCoinsQuery();
+  const { data, isLoading, error } = useGetTopCoinsQuery(undefined, {
+    pollingInterval: 30000,
+  });
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<
     "price" | "marketCap" | "change24h" | null
