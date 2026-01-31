@@ -53,8 +53,6 @@ const DashboardPage = () => {
 
   return (
     <div>
-      <h1>Market</h1>
-
       <Box mb={3}>
         <Typography variant="h4" gutterBottom>
           Market

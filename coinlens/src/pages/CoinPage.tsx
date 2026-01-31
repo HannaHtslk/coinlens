@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { useAppDispatch } from "../store/hooks";
 import { addToPortfolio } from "../redux/portfolio/portfolioSlice";
+import { Box, Typography, Button, Paper, Stack } from "@mui/material";
 
 import {
   useGetCoinByIdQuery,
@@ -41,53 +42,79 @@ const CoinPage = () => {
     })) ?? [];
 
   return (
-    <>
-      <div>
-        <h1>{data.name}</h1>
+    <Box>
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Typography variant="h4" gutterBottom>
+          {data.name}
+        </Typography>
 
-        <p>Symbol: {data.symbol.toUpperCase()}</p>
-        <p>Current price: ${data.market_data.current_price.usd}</p>
-        <p>Market cap: ${data.market_data.market_cap.usd}</p>
-      </div>
-      <div style={{ marginTop: "24px" }}>
-        <button onClick={() => setDays(7)}>7d</button>
-        <button onClick={() => setDays(30)}>30d</button>
-      </div>
+        <Typography color="text.secondary">
+          Symbol: {data.symbol.toUpperCase()}
+        </Typography>
 
-      <button
-        onClick={() =>
-          dispatch(
-            addToPortfolio({
-              coinId: id!,
-              name: data.name,
-              amount: 1,
-            })
-          )
-        }
-      >
-        Add to portfolio
-      </button>
+        <Typography sx={{ mt: 1 }}>
+          Current price: ${data.market_data.current_price.usd.toLocaleString()}
+        </Typography>
 
-      <div style={{ width: "100%", height: 300, marginTop: "16px" }}>
-        {isChartLoading ? (
-          <p>Loading chart...</p>
-        ) : (
-          <ResponsiveContainer>
-            <LineChart data={prices}>
-              <XAxis dataKey="time" hide />
-              <YAxis domain={["auto", "auto"]} />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="price"
-                stroke="#8884d8"
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
-      </div>
-    </>
+        <Typography>
+          Market cap: ${data.market_data.market_cap.usd.toLocaleString()}
+        </Typography>
+
+        <Button
+          variant="contained"
+          sx={{ mt: 2 }}
+          onClick={() =>
+            dispatch(
+              addToPortfolio({
+                coinId: id!,
+                name: data.name,
+                amount: 1,
+              })
+            )
+          }
+        >
+          Add to portfolio
+        </Button>
+      </Paper>
+
+      <Paper sx={{ p: 3 }}>
+        <Stack direction="row" spacing={2} mb={2}>
+          <Button
+            variant={days === 7 ? "contained" : "outlined"}
+            onClick={() => setDays(7)}
+          >
+            7d
+          </Button>
+
+          <Button
+            variant={days === 30 ? "contained" : "outlined"}
+            onClick={() => setDays(30)}
+          >
+            30d
+          </Button>
+        </Stack>
+
+        <Box sx={{ width: "100%", height: 300 }}>
+          {isChartLoading ? (
+            <Typography>Loading chart...</Typography>
+          ) : (
+            <ResponsiveContainer>
+              <LineChart data={prices}>
+                <XAxis dataKey="time" hide />
+                <YAxis domain={["auto", "auto"]} />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="price"
+                  stroke="#4f8cff"
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 
