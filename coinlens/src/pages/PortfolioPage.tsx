@@ -1,6 +1,18 @@
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { removeFromPortfolio } from "../redux/portfolio/portfolioSlice";
 import { useGetTopCoinsQuery } from "../api/cryptoApi";
+import {
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+} from "@mui/material";
 
 const PortfolioPage = () => {
   const dispatch = useAppDispatch();
@@ -8,7 +20,16 @@ const PortfolioPage = () => {
   const { data: marketData } = useGetTopCoinsQuery();
 
   if (items.length === 0) {
-    return <h1>Portfolio is empty</h1>;
+    return (
+      <Box>
+        <Typography variant="h4" gutterBottom>
+          Portfolio
+        </Typography>
+        <Typography color="text.secondary">
+          Your portfolio is empty. Add coins from the market.
+        </Typography>
+      </Box>
+    );
   }
 
   const enrichedItems = items.map((item) => {
@@ -27,40 +48,52 @@ const PortfolioPage = () => {
   const totalValue = enrichedItems.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <div>
-      <h1>Portfolio</h1>
+    <Box>
+      <Typography variant="h4" gutterBottom>
+        Portfolio
+      </Typography>
 
-      <table>
-        <thead>
-          <tr>
-            <th align="left">Coin</th>
-            <th align="right">Amount</th>
-            <th align="right">Price (USD)</th>
-            <th align="right">Value (USD)</th>
-            <th />
-          </tr>
-        </thead>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Coin</TableCell>
+              <TableCell align="right">Amount</TableCell>
+              <TableCell align="right">Price (USD)</TableCell>
+              <TableCell align="right">Value (USD)</TableCell>
+              <TableCell />
+            </TableRow>
+          </TableHead>
 
-        <tbody>
-          {enrichedItems.map((item) => (
-            <tr key={item.coinId}>
-              <td>{item.name}</td>
-              <td align="right">{item.amount}</td>
-              <td align="right">${item.price.toLocaleString()}</td>
-              <td align="right">${item.value.toLocaleString()}</td>
-              <td>
-                <button
-                  onClick={() => dispatch(removeFromPortfolio(item.coinId))}
-                >
-                  Remove
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <h2>Total value: ${totalValue.toLocaleString()}</h2>
-    </div>
+          <TableBody>
+            {enrichedItems.map((item) => (
+              <TableRow key={item.coinId}>
+                <TableCell>{item.name}</TableCell>
+                <TableCell align="right">{item.amount}</TableCell>
+                <TableCell align="right">
+                  ${item.price.toLocaleString()}
+                </TableCell>
+                <TableCell align="right">
+                  ${item.value.toLocaleString()}
+                </TableCell>
+                <TableCell align="right">
+                  <Button
+                    color="error"
+                    onClick={() => dispatch(removeFromPortfolio(item.coinId))}
+                  >
+                    Remove
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Typography variant="h5" sx={{ mt: 3 }}>
+        Total value: ${totalValue.toLocaleString()}
+      </Typography>
+    </Box>
   );
 };
 
