@@ -5,20 +5,20 @@ import DashboardPage from "./pages/DashboardPage";
 import CoinPage from "./pages/CoinPage";
 import PortfolioPage from "./pages/PortfolioPage";
 import Layout from "./components/Layout";
-import { Box } from "@mui/material";
+import { Container } from "@mui/material";
 
 function App() {
   return (
     <BrowserRouter>
       <Layout />
-      <Box sx={{ p: 3 }}>
+      <Container maxWidth="lg" sx={{ py: 4 }} disableGutters>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/coin/:id" element={<CoinPage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
         </Routes>
-      </Box>
+      </Container>
     </BrowserRouter>
   );
 }

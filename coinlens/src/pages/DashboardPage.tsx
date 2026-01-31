@@ -14,7 +14,6 @@ import {
   TextField,
   Button,
   Stack,
-  Typography,
 } from "@mui/material";
 
 const DashboardPage = () => {
@@ -80,10 +79,6 @@ const DashboardPage = () => {
   return (
     <div>
       <Box mb={3}>
-        <Typography variant="h4" gutterBottom>
-          Market
-        </Typography>
-
         <Stack direction="row" spacing={2}>
           <TextField
             label="Search coin"
