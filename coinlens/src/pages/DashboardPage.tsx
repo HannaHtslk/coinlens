@@ -23,9 +23,22 @@ const DashboardPage = () => {
     pollingInterval: 30000,
   });
   const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<
-    "price" | "marketCap" | "change24h" | null
-  >(null);
+  const [sortConfig, setSortConfig] = useState<{
+    key: "price" | "marketCap" | "change24h" | null;
+    direction: "asc" | "desc" | null;
+  }>({ key: null, direction: null });
+
+  const handleSort = (key: "price" | "marketCap" | "change24h") => {
+    if (sortConfig.key === key) {
+      if (sortConfig.direction === "desc") {
+        setSortConfig({ key, direction: "asc" });
+      } else if (sortConfig.direction === "asc") {
+        setSortConfig({ key: null, direction: null });
+      }
+    } else {
+      setSortConfig({ key, direction: "desc" });
+    }
+  };
 
   const filteredAndSortedData = useMemo(() => {
     if (!data) return [];
@@ -34,24 +47,32 @@ const DashboardPage = () => {
       coin.name.toLowerCase().includes(search.toLowerCase())
     );
 
-    if (sortKey === "price") {
-      result = [...result].sort((a, b) => b.current_price - a.current_price);
-    }
+    if (sortConfig.key && sortConfig.direction) {
+      result = [...result].sort((a, b) => {
+        let aValue = 0;
+        let bValue = 0;
 
-    if (sortKey === "marketCap") {
-      result = [...result].sort((a, b) => b.market_cap - a.market_cap);
-    }
+        if (sortConfig.key === "price") {
+          aValue = a.current_price;
+          bValue = b.current_price;
+        } else if (sortConfig.key === "marketCap") {
+          aValue = a.market_cap;
+          bValue = b.market_cap;
+        } else if (sortConfig.key === "change24h") {
+          aValue = a.price_change_percentage_24h ?? 0;
+          bValue = b.price_change_percentage_24h ?? 0;
+        }
 
-    if (sortKey === "change24h") {
-      result = [...result].sort(
-        (a, b) =>
-          (b.price_change_percentage_24h ?? 0) -
-          (a.price_change_percentage_24h ?? 0)
-      );
+        if (sortConfig.direction === "desc") {
+          return bValue - aValue;
+        } else {
+          return aValue - bValue;
+        }
+      });
     }
 
     return result;
-  }, [data, search, sortKey]);
+  }, [data, search, sortConfig]);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading data</p>;
@@ -72,15 +93,24 @@ const DashboardPage = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
 
-          <Button variant="contained" onClick={() => setSortKey("price")}>
+          <Button
+            variant={sortConfig.key === "price" ? "contained" : "outlined"}
+            onClick={() => handleSort("price")}
+          >
             Price
           </Button>
 
-          <Button variant="contained" onClick={() => setSortKey("marketCap")}>
+          <Button
+            variant={sortConfig.key === "marketCap" ? "contained" : "outlined"}
+            onClick={() => handleSort("marketCap")}
+          >
             Market Cap
           </Button>
 
-          <Button variant="contained" onClick={() => setSortKey("change24h")}>
+          <Button
+            variant={sortConfig.key === "change24h" ? "contained" : "outlined"}
+            onClick={() => handleSort("change24h")}
+          >
             24h %
           </Button>
         </Stack>

@@ -2,7 +2,14 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { useAppDispatch } from "../store/hooks";
 import { addToPortfolio } from "../redux/portfolio/portfolioSlice";
-import { Box, Typography, Button, Paper, Stack } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Paper,
+  Stack,
+  TextField,
+} from "@mui/material";
 
 import {
   useGetCoinByIdQuery,
@@ -23,6 +30,7 @@ const CoinPage = () => {
   const { id } = useParams<{ id: string }>();
   const [days, setDays] = useState<7 | 30>(7);
   const [justAdded, setJustAdded] = useState(false);
+  const [amount, setAmount] = useState<string>("");
 
   const { data, isLoading, error } = useGetCoinByIdQuery(id!);
 
@@ -60,31 +68,87 @@ const CoinPage = () => {
         <Typography>
           Market cap: ${data.market_data.market_cap.usd.toLocaleString()}
         </Typography>
-        <Button
-          variant="contained"
-          color={justAdded ? "success" : "primary"}
-          sx={{ mt: 2 }}
-          onClick={() => {
-            if (justAdded) return;
 
-            dispatch(
-              addToPortfolio({
-                coinId: id!,
-                name: data.name,
-                amount: 1,
-                investedUsd: data.market_data.current_price.usd,
-              })
-            );
+        <Box sx={{ mt: 3 }}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <TextField
+              label="Amount"
+              type="number"
+              size="small"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder={`Minimum 0.00001 ${data.symbol.toUpperCase()}`}
+              inputProps={{ min: 0, step: "any" }}
+              sx={{
+                width: 200,
+                "& input[type=number]": {
+                  MozAppearance: "textfield",
+                },
+                "& input[type=number]::-webkit-outer-spin-button": {
+                  WebkitAppearance: "none",
+                  margin: 0,
+                },
+                "& input[type=number]::-webkit-inner-spin-button": {
+                  WebkitAppearance: "none",
+                  margin: 0,
+                },
+              }}
+            />
 
-            setJustAdded(true);
+            {!justAdded ? (
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={
+                  !amount || amount.trim() === "" || parseFloat(amount) <= 0
+                }
+                onClick={() => {
+                  const numAmount = parseFloat(amount);
+                  if (isNaN(numAmount) || numAmount <= 0) return;
 
-            setTimeout(() => {
-              setJustAdded(false);
-            }, 2000);
-          }}
-        >
-          {justAdded ? "Added to portfolio" : "Add to portfolio"}
-        </Button>
+                  dispatch(
+                    addToPortfolio({
+                      coinId: id!,
+                      name: data.name,
+                      amount: numAmount,
+                      investedUsd: data.market_data.current_price.usd * numAmount,
+                    })
+                  );
+
+                  setJustAdded(true);
+                  setAmount("");
+
+                  setTimeout(() => {
+                    setJustAdded(false);
+                  }, 2000);
+                }}
+              >
+                Add to portfolio
+              </Button>
+            ) : (
+              <Typography
+                variant="body2"
+                sx={{ color: "success.main", fontWeight: 500 }}
+              >
+                ✓ Successfully added to portfolio
+              </Typography>
+            )}
+          </Stack>
+
+          {!justAdded &&
+            parseFloat(amount) > 0 &&
+            !isNaN(parseFloat(amount)) && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              Total cost: $
+              {(
+                data.market_data.current_price.usd * parseFloat(amount)
+              ).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </Typography>
+            )}
+        </Box>
       </Paper>
 
       <Paper sx={{ p: 3 }}>
