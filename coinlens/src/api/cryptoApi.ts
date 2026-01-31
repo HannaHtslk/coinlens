@@ -10,7 +10,10 @@ export const cryptoApi = createApi({
       query: () =>
         "coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1",
     }),
+    getCoinById: builder.query<any, string>({
+      query: (coinId) => `coins/${coinId}`,
+    }),
   }),
 });
 
-export const { useGetTopCoinsQuery } = cryptoApi;
+export const { useGetTopCoinsQuery, useGetCoinByIdQuery, } = cryptoApi;
