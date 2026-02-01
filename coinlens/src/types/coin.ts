@@ -6,6 +6,7 @@ export type CoinMarket = {
   current_price: number;
   market_cap: number;
   price_change_percentage_24h: number | null;
+  total_volume: number;
 };
 
 export type CoinDetails = {

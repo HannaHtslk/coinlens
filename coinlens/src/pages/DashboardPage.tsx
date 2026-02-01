@@ -17,17 +17,28 @@ import {
   Pagination,
   IconButton,
   TableSortLabel,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { toggleFavorite } from "../redux/favorites/favoritesSlice";
-import { getFallbackLetter } from "../helpers/helpers";
+import {
+  formatCompactNumber,
+  getFallbackLetter,
+  isFiat,
+  isStableCoin,
+} from "../helpers/helpers";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const favoriteIds = useAppSelector((state) => state.favorites.ids);
+
+  type MarketFilter = "all" | "favorites" | "crypto" | "stable" | "fiat";
+
+  const [marketFilter, setMarketFilter] = useState<MarketFilter>("all");
   const [page, setPage] = useState(1);
   const [pendingPage, setPendingPage] = useState(1);
 
@@ -49,11 +60,11 @@ const DashboardPage = () => {
   const { data, isLoading, error } = useGetTopCoinsQuery(page);
   const [search, setSearch] = useState("");
   const [sortConfig, setSortConfig] = useState<{
-    key: "price" | "marketCap" | "change24h" | null;
+    key: "price" | "marketCap" | "change24h" | "volume" | null;
     direction: "asc" | "desc" | null;
   }>({ key: null, direction: null });
 
-  const handleSort = (key: "price" | "marketCap" | "change24h") => {
+  const handleSort = (key: "price" | "marketCap" | "change24h" | "volume") => {
     if (sortConfig.key === key) {
       if (sortConfig.direction === "desc") {
         setSortConfig({ key, direction: "asc" });
@@ -71,6 +82,23 @@ const DashboardPage = () => {
     let result = data.filter((coin) =>
       coin.name.toLowerCase().includes(search.toLowerCase())
     );
+    if (marketFilter === "favorites") {
+      result = result.filter((coin) => favoriteIds.includes(coin.id));
+    }
+
+    if (marketFilter === "stable") {
+      result = result.filter((coin) => isStableCoin(coin.symbol));
+    }
+
+    if (marketFilter === "fiat") {
+      result = result.filter((coin) => isFiat(coin.symbol));
+    }
+
+    if (marketFilter === "crypto") {
+      result = result.filter(
+        (coin) => !isStableCoin(coin.symbol) && !isFiat(coin.symbol)
+      );
+    }
 
     if (sortConfig.key && sortConfig.direction) {
       result = [...result].sort((a, b) => {
@@ -86,6 +114,9 @@ const DashboardPage = () => {
         } else if (sortConfig.key === "change24h") {
           aValue = a.price_change_percentage_24h ?? 0;
           bValue = b.price_change_percentage_24h ?? 0;
+        } else if (sortConfig.key === "volume") {
+          aValue = a.total_volume;
+          bValue = b.total_volume;
         }
 
         if (sortConfig.direction === "asc") {
@@ -97,7 +128,7 @@ const DashboardPage = () => {
     }
 
     return result;
-  }, [data, search, sortConfig]);
+  }, [data, search, sortConfig, marketFilter, favoriteIds]);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading data</p>;
@@ -116,6 +147,23 @@ const DashboardPage = () => {
               setPage(1);
             }}
           />
+          <ToggleButtonGroup
+            value={marketFilter}
+            exclusive
+            size="small"
+            onChange={(_, value) => {
+              if (!value) return;
+              setMarketFilter(value);
+              setPage(1);
+              setPendingPage(1);
+            }}
+          >
+            <ToggleButton value="all">All</ToggleButton>
+            <ToggleButton value="favorites">Favorites</ToggleButton>
+            <ToggleButton value="crypto">Crypto</ToggleButton>
+            <ToggleButton value="stable">Stable</ToggleButton>
+            <ToggleButton value="fiat">Fiat</ToggleButton>
+          </ToggleButtonGroup>
         </Stack>
       </Box>
 
@@ -165,6 +213,27 @@ const DashboardPage = () => {
                   24h %
                 </TableSortLabel>
               </TableCell>
+              <TableCell
+                align="right"
+                sortDirection={
+                  sortConfig.key === "volume"
+                    ? (sortConfig.direction ?? undefined)
+                    : undefined
+                }
+              >
+                <TableSortLabel
+                  active={sortConfig.key === "volume"}
+                  direction={
+                    sortConfig.key === "volume" && sortConfig.direction
+                      ? sortConfig.direction
+                      : "asc"
+                  }
+                  onClick={() => handleSort("volume")}
+                >
+                  Volume (24h)
+                </TableSortLabel>
+              </TableCell>
+
               <TableCell
                 align="right"
                 sortDirection={
@@ -252,7 +321,10 @@ const DashboardPage = () => {
                   {coin.price_change_percentage_24h?.toFixed(2)}%
                 </TableCell>
                 <TableCell align="right">
-                  ${coin.market_cap.toLocaleString()}
+                  ${formatCompactNumber(coin.total_volume)}
+                </TableCell>
+                <TableCell align="right">
+                  ${formatCompactNumber(coin.market_cap)}
                 </TableCell>
               </TableRow>
             ))}
