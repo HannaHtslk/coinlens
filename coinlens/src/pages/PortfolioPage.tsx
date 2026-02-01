@@ -30,7 +30,7 @@ const PortfolioPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const items = useAppSelector((state) => state.portfolio.items);
-  const { data: marketData } = useGetTopCoinsQuery();
+  const { data: marketData } = useGetTopCoinsQuery(1);
 
   if (items.length === 0) {
     return (

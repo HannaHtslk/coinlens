@@ -12,15 +12,22 @@ import {
   TableRow,
   Paper,
   TextField,
-  Button,
   Stack,
   Avatar,
   Pagination,
+  IconButton,
+  TableSortLabel,
 } from "@mui/material";
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { toggleFavorite } from "../redux/favorites/favoritesSlice";
 import { getFallbackLetter } from "../helpers/helpers";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const favoriteIds = useAppSelector((state) => state.favorites.ids);
   const [page, setPage] = useState(1);
   const [pendingPage, setPendingPage] = useState(1);
 
@@ -81,7 +88,7 @@ const DashboardPage = () => {
           bValue = b.price_change_percentage_24h ?? 0;
         }
 
-        if (sortConfig.direction === "desc") {
+        if (sortConfig.direction === "asc") {
           return bValue - aValue;
         } else {
           return aValue - bValue;
@@ -109,27 +116,6 @@ const DashboardPage = () => {
               setPage(1);
             }}
           />
-
-          <Button
-            variant={sortConfig.key === "price" ? "contained" : "outlined"}
-            onClick={() => handleSort("price")}
-          >
-            Price
-          </Button>
-
-          <Button
-            variant={sortConfig.key === "marketCap" ? "contained" : "outlined"}
-            onClick={() => handleSort("marketCap")}
-          >
-            Market Cap
-          </Button>
-
-          <Button
-            variant={sortConfig.key === "change24h" ? "contained" : "outlined"}
-            onClick={() => handleSort("change24h")}
-          >
-            24h %
-          </Button>
         </Stack>
       </Box>
 
@@ -137,16 +123,90 @@ const DashboardPage = () => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell padding="checkbox"></TableCell>
               <TableCell>Coin</TableCell>
-              <TableCell align="right">Price (USD)</TableCell>
-              <TableCell align="right">24h %</TableCell>
-              <TableCell align="right">Market Cap</TableCell>
+              <TableCell
+                align="right"
+                sortDirection={
+                  sortConfig.key === "price"
+                    ? (sortConfig.direction ?? undefined)
+                    : undefined
+                }
+              >
+                <TableSortLabel
+                  active={sortConfig.key === "price"}
+                  direction={
+                    sortConfig.key === "price" && sortConfig.direction
+                      ? sortConfig.direction
+                      : "asc"
+                  }
+                  onClick={() => handleSort("price")}
+                >
+                  Price (USD)
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                align="right"
+                sortDirection={
+                  sortConfig.key === "change24h"
+                    ? (sortConfig.direction ?? undefined)
+                    : undefined
+                }
+              >
+                <TableSortLabel
+                  active={sortConfig.key === "change24h"}
+                  direction={
+                    sortConfig.key === "change24h" && sortConfig.direction
+                      ? sortConfig.direction
+                      : "asc"
+                  }
+                  onClick={() => handleSort("change24h")}
+                >
+                  24h %
+                </TableSortLabel>
+              </TableCell>
+              <TableCell
+                align="right"
+                sortDirection={
+                  sortConfig.key === "marketCap"
+                    ? (sortConfig.direction ?? undefined)
+                    : undefined
+                }
+              >
+                <TableSortLabel
+                  active={sortConfig.key === "marketCap"}
+                  direction={
+                    sortConfig.key === "marketCap" && sortConfig.direction
+                      ? sortConfig.direction
+                      : "asc"
+                  }
+                  onClick={() => handleSort("marketCap")}
+                >
+                  Market Cap
+                </TableSortLabel>
+              </TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
             {filteredAndSortedData.map((coin) => (
               <TableRow key={coin.id}>
+                <TableCell padding="checkbox">
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch(toggleFavorite(coin.id));
+                    }}
+                  >
+                    {favoriteIds.includes(coin.id) ? (
+                      <StarIcon color="warning" fontSize="small" />
+                    ) : (
+                      <StarBorderIcon fontSize="small" />
+                    )}
+                  </IconButton>
+                </TableCell>
+
                 <TableCell
                   sx={{
                     cursor: "pointer",
