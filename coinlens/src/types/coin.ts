@@ -1,5 +1,6 @@
 export type CoinMarket = {
   id: string;
+  image: string;
   name: string;
   symbol: string;
   current_price: number;

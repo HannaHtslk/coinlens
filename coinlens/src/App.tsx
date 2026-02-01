@@ -11,7 +11,7 @@ function App() {
   return (
     <BrowserRouter>
       <Layout />
-      <Container maxWidth="lg" sx={{ py: 4 }} disableGutters>
+      <Container maxWidth={false} sx={{ py: 4 }} disableGutters>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="/dashboard" element={<DashboardPage />} />

@@ -13,6 +13,8 @@ import {
   TableRow,
   Paper,
   Button,
+  Avatar,
+  Stack,
 } from "@mui/material";
 import {
   PieChart,
@@ -22,6 +24,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { getFallbackLetter } from "../helpers/helpers";
 
 const PortfolioPage = () => {
   const dispatch = useAppDispatch();
@@ -79,6 +82,7 @@ const PortfolioPage = () => {
     if (percent === undefined) return "";
     return `${(percent * 100).toFixed(1)}%`;
   };
+  const marketMap = new Map(marketData?.map((coin) => [coin.id, coin]) ?? []);
 
   return (
     <Box>
@@ -197,13 +201,27 @@ const PortfolioPage = () => {
                         cursor: "pointer",
                         color: "primary.main",
                         fontWeight: 500,
-                        "&:hover": {
-                          textDecoration: "underline",
-                        },
+                        "&:hover": { textDecoration: "underline" },
                       }}
                       onClick={() => navigate(`/coin/${item.coinId}`)}
                     >
-                      {item.name}
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Avatar
+                          src={marketMap.get(item.coinId)?.image}
+                          alt={item.name}
+                          sx={{ width: 24, height: 24 }}
+                          imgProps={{
+                            loading: "lazy",
+                            onError: (e) => {
+                              (e.target as HTMLImageElement).src = "";
+                            },
+                          }}
+                        >
+                          {getFallbackLetter(item.name)}
+                        </Avatar>
+
+                        <span>{item.name}</span>
+                      </Stack>
                     </TableCell>
 
                     <TableCell align="right">{item.amount}</TableCell>
@@ -219,15 +237,16 @@ const PortfolioPage = () => {
                     <TableCell
                       align="right"
                       sx={{
-                        display: { xs: "none", md: "table-cell" },
                         color: item.pnl >= 0 ? "success.main" : "error.main",
                       }}
                     >
-                      {item.pnlPercent.toFixed(2)}%
+                      ${item.pnl.toLocaleString()}
                     </TableCell>
+
                     <TableCell
                       align="right"
                       sx={{
+                        display: { xs: "none", md: "table-cell" },
                         color: item.pnl >= 0 ? "success.main" : "error.main",
                       }}
                     >

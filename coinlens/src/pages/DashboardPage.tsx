@@ -14,7 +14,9 @@ import {
   TextField,
   Button,
   Stack,
+  Avatar,
 } from "@mui/material";
+import { getFallbackLetter } from "../helpers/helpers";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -136,7 +138,23 @@ const DashboardPage = () => {
                   }}
                   onClick={() => navigate(`/coin/${coin.id}`)}
                 >
-                  {coin.name}
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Avatar
+                      src={coin.image}
+                      alt={coin.name}
+                      sx={{ width: 24, height: 24 }}
+                      imgProps={{
+                        loading: "lazy",
+                        onError: (e) => {
+                          (e.target as HTMLImageElement).src = "";
+                        },
+                      }}
+                    >
+                      {getFallbackLetter(coin.name)}
+                    </Avatar>
+
+                    <span>{coin.name}</span>
+                  </Stack>
                 </TableCell>
                 <TableCell align="right">
                   ${coin.current_price.toLocaleString()}
