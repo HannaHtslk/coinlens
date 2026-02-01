@@ -50,6 +50,13 @@ const CoinPage = () => {
       price: item[1],
     })) ?? [];
 
+  const trend =
+    prices.length > 1 && prices[prices.length - 1].price >= prices[0].price
+      ? "up"
+      : "down";
+
+  const lineColor = trend === "up" ? "#2e7d32" : "#d32f2f";
+
   return (
     <Box>
       <Paper sx={{ p: 3, mb: 3 }}>
@@ -111,7 +118,8 @@ const CoinPage = () => {
                       coinId: id!,
                       name: data.name,
                       amount: numAmount,
-                      investedUsd: data.market_data.current_price.usd * numAmount,
+                      investedUsd:
+                        data.market_data.current_price.usd * numAmount,
                     })
                   );
 
@@ -138,15 +146,15 @@ const CoinPage = () => {
           {!justAdded &&
             parseFloat(amount) > 0 &&
             !isNaN(parseFloat(amount)) && (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Total cost: $
-              {(
-                data.market_data.current_price.usd * parseFloat(amount)
-              ).toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                Total cost: $
+                {(
+                  data.market_data.current_price.usd * parseFloat(amount)
+                ).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </Typography>
             )}
         </Box>
       </Paper>
@@ -182,7 +190,8 @@ const CoinPage = () => {
                 <Line
                   type="monotone"
                   dataKey="price"
-                  stroke="#4f8cff"
+                  stroke={lineColor}
+                  strokeWidth={2}
                   dot={false}
                 />
               </LineChart>
