@@ -1,5 +1,5 @@
 import { useGetTopCoinsQuery } from "../api/cryptoApi";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -15,14 +15,31 @@ import {
   Button,
   Stack,
   Avatar,
+  Pagination,
 } from "@mui/material";
 import { getFallbackLetter } from "../helpers/helpers";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
-  const { data, isLoading, error } = useGetTopCoinsQuery(undefined, {
-    pollingInterval: 30000,
-  });
+  const [page, setPage] = useState(1);
+  const [pendingPage, setPendingPage] = useState(1);
+
+  const lastRequestRef = useRef<number>(0);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const now = Date.now();
+
+      if (now - lastRequestRef.current < 800) return;
+
+      lastRequestRef.current = now;
+      setPage(pendingPage);
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [pendingPage]);
+
+  const { data, isLoading, error } = useGetTopCoinsQuery(page);
   const [search, setSearch] = useState("");
   const [sortConfig, setSortConfig] = useState<{
     key: "price" | "marketCap" | "change24h" | null;
@@ -87,7 +104,10 @@ const DashboardPage = () => {
             variant="outlined"
             size="small"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
           />
 
           <Button
@@ -179,6 +199,20 @@ const DashboardPage = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mt: 3,
+        }}
+      >
+        <Pagination
+          page={pendingPage}
+          onChange={(_, value) => setPendingPage(value)}
+          count={10}
+          color="primary"
+        />
+      </Box>
     </div>
   );
 };

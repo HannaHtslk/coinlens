@@ -14,10 +14,10 @@ export const cryptoApi = createApi({
   refetchOnFocus: false,
   refetchOnReconnect: false,
   endpoints: (builder) => ({
-    getTopCoins: builder.query<CoinMarket[], void>({
-      query: () =>
-        "coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1",
-      keepUnusedDataFor: 300,
+    getTopCoins: builder.query<CoinMarket[], number>({
+      query: (page: number = 1) =>
+        `coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=${page}`,
+      keepUnusedDataFor: 600,
     }),
     getCoinById: builder.query<CoinDetails, string>({
       query: (coinId) => `coins/${coinId}`,
