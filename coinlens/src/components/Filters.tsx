@@ -9,7 +9,9 @@ export const Filters = ({ search, setSearch, setPage, marketFilter, setMarketFil
                 borderRadius: 3,
                 border: "1px solid",
                 borderColor: "divider",
-                backgroundColor: "background.paper",
+                background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+                backdropFilter: "blur(8px)",
             }}
         >
             <Stack direction="row" spacing={2}>

@@ -1,5 +1,5 @@
 import { Avatar, Box, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, Typography } from "@mui/material";
-import { SkeletonLoader } from "./Skeleton";
+import { SkeletonLoader } from "./SkeletonLoader";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { formatCompactNumber } from "../helpers/helpers";
