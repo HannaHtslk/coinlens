@@ -14,9 +14,9 @@ export const cryptoApi = createApi({
   refetchOnFocus: false,
   refetchOnReconnect: false,
   endpoints: (builder) => ({
-    getTopCoins: builder.query<CoinMarket[], number>({
-      query: (page: number = 1) =>
-        `coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=${page}`,
+    getTopCoins: builder.query<CoinMarket[], { page: number; perPage?: number }>({
+      query: ({ page = 1, perPage = 20 }) =>
+        `coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${perPage}&page=${page}`,
       keepUnusedDataFor: 600,
     }),
     getCoinById: builder.query<CoinDetails, string>({

@@ -1,5 +1,5 @@
 import { useGetTopCoinsQuery } from "../api/cryptoApi";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -26,35 +26,40 @@ const DashboardPage = () => {
   const favoriteIds = useAppSelector((state) => state.favorites.ids);
 
   const PER_PAGE = 20;
+  const FILTERED_PER_PAGE = 250;
 
   const [marketFilter, setMarketFilter] = useState<MarketFilter>("all");
   const [page, setPage] = useState(1);
   const [pendingPage, setPendingPage] = useState(1);
+  const [filteredPage, setFilteredPage] = useState(1);
 
-  const lastRequestRef = useRef<number>(0);
 
   useEffect(() => {
+    if (pendingPage === page) {
+      return;
+    }
+
     const timeoutId = setTimeout(() => {
-      const now = Date.now();
-
-      if (now - lastRequestRef.current < 800) return;
-
-      lastRequestRef.current = now;
       setPage(pendingPage);
-    }, 300);
+    }, 1000);
 
     return () => clearTimeout(timeoutId);
-  }, [pendingPage]);
+  }, [pendingPage, page]);
 
-  const { data, isLoading, error } = useGetTopCoinsQuery(page);
   const [search, setSearch] = useState("");
+  const isFiltered = marketFilter !== "all" || search.trim().length > 0;
+
+  const { data, isLoading, error } = useGetTopCoinsQuery({
+    page: isFiltered ? 1 : page,
+    perPage: isFiltered ? FILTERED_PER_PAGE : PER_PAGE,
+  });
+
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: null,
     direction: null,
   });
 
-  const hasNextPage = data?.length === PER_PAGE;
-  const isFiltered = marketFilter !== "all" || search.trim().length > 0;
+  const hasNextPage = !isFiltered && data?.length === PER_PAGE;
 
   const handleSort = (key: string) => {
     if (sortConfig.key === key) {
@@ -68,7 +73,7 @@ const DashboardPage = () => {
     }
   };
 
-  const filteredAndSortedData = useMemo(() => {
+  const allFilteredData = useMemo(() => {
     if (!data) return [];
 
     return filterAndSortCoins(data, {
@@ -79,16 +84,27 @@ const DashboardPage = () => {
     });
   }, [data, search, sortConfig, marketFilter, favoriteIds]);
 
+  const filteredAndSortedData = useMemo(() => {
+    if (!isFiltered) return allFilteredData;
+
+    const startIndex = (filteredPage - 1) * PER_PAGE;
+    const endIndex = startIndex + PER_PAGE;
+    return allFilteredData.slice(startIndex, endIndex);
+  }, [allFilteredData, filteredPage, isFiltered, PER_PAGE]);
+
+  const totalFilteredPages = Math.ceil(allFilteredData.length / PER_PAGE);
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setPage(1);
       setPendingPage(1);
+      setFilteredPage(1);
     }, 100);
 
     return () => clearTimeout(timeoutId);
   }, [marketFilter, search]);
 
-  const isEmpty = filteredAndSortedData.length === 0;
+  const isEmpty = allFilteredData.length === 0;
 
 
   if (error) return <p>Error loading data</p>;
@@ -116,16 +132,29 @@ const DashboardPage = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "center",
           mt: 3,
+          gap: 1,
         }}
       >
-        {!isFiltered && (
-          <Pagination
-            page={pendingPage}
-            count={pendingPage + (hasNextPage ? 1 : 0)}
-            onChange={(_, value) => setPendingPage(value)}
-          />
+        {isFiltered ? (
+          totalFilteredPages > 1 && (
+            <Pagination
+              page={filteredPage}
+              count={totalFilteredPages}
+              onChange={(_, value) => setFilteredPage(value)}
+            />
+          )
+        ) : (
+          <>
+            <Pagination
+              page={pendingPage}
+              count={pendingPage + (hasNextPage ? 1 : 0)}
+              onChange={(_, value) => setPendingPage(value)}
+              disabled={isLoading}
+            />
+          </>
         )}
       </Box>
     </>
