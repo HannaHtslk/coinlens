@@ -37,9 +37,22 @@ const portfolioSlice = createSlice({
         (item) => item.coinId !== action.payload
       );
     },
+
+    updateAmount(
+      state,
+      action: PayloadAction<{ coinId: string; newAmount: number; currentPrice: number }>
+    ) {
+      const item = state.items.find((i) => i.coinId === action.payload.coinId);
+      if (item) {
+        const oldAmount = item.amount;
+        const pricePerUnit = item.investedUsd / oldAmount;
+        item.amount = action.payload.newAmount;
+        item.investedUsd = pricePerUnit * action.payload.newAmount;
+      }
+    },
   },
 });
 
-export const { addToPortfolio, removeFromPortfolio } = portfolioSlice.actions;
+export const { addToPortfolio, removeFromPortfolio, updateAmount } = portfolioSlice.actions;
 
 export default portfolioSlice.reducer;

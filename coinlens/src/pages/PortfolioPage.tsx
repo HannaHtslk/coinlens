@@ -1,7 +1,8 @@
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { removeFromPortfolio } from "../redux/portfolio/portfolioSlice";
+import { removeFromPortfolio, updateAmount } from "../redux/portfolio/portfolioSlice";
 import { useGetTopCoinsQuery } from "../api/cryptoApi";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   Box,
   Typography,
@@ -12,10 +13,13 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
+  IconButton,
   Avatar,
   Stack,
+  TextField,
+  Button,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   PieChart,
   Pie,
@@ -24,13 +28,35 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { getFallbackLetter } from "../helpers/helpers";
+import { getFallbackLetter, formatCompactNumber } from "../helpers/helpers";
 
 const PortfolioPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const items = useAppSelector((state) => state.portfolio.items);
-  const { data: marketData } = useGetTopCoinsQuery(1);
+  const { data: marketData } = useGetTopCoinsQuery({ page: 1, perPage: 250 });
+
+  const [editingCoinId, setEditingCoinId] = useState<string | null>(null);
+  const [editAmount, setEditAmount] = useState<string>("");
+
+  const handleStartEdit = (coinId: string, currentAmount: number) => {
+    setEditingCoinId(coinId);
+    setEditAmount(currentAmount.toString());
+  };
+
+  const handleSaveEdit = (coinId: string, currentPrice: number) => {
+    const newAmount = parseFloat(editAmount);
+    if (!isNaN(newAmount) && newAmount > 0) {
+      dispatch(updateAmount({ coinId, newAmount, currentPrice }));
+      setEditingCoinId(null);
+      setEditAmount("");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCoinId(null);
+    setEditAmount("");
+  };
 
   if (items.length === 0) {
     return (
@@ -38,9 +64,26 @@ const PortfolioPage = () => {
         <Typography variant="h4" gutterBottom>
           Portfolio
         </Typography>
-        <Typography color="text.secondary">
+        <Typography color="text.secondary" gutterBottom>
           Your portfolio is empty. Add coins from the market.
         </Typography>
+        <Button
+          variant="contained"
+          onClick={() => navigate("/")}
+          sx={{
+            mt: 2,
+            background:
+              "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+            backdropFilter: "blur(8px)",
+            color: "text.primary",
+            "&:hover": {
+              background:
+                "linear-gradient(180deg, rgba(255, 255, 255, 0.33), rgba(255,255,255,0))",
+            },
+          }}
+        >
+          Go to Market
+        </Button>
       </Box>
     );
   }
@@ -94,14 +137,22 @@ const PortfolioPage = () => {
           mb: 3,
         }}
       >
-        <Paper sx={{ p: 2 }}>
+        <Paper sx={{
+          p: 2, background:
+            "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+          backdropFilter: "blur(8px)",
+        }}>
           <Typography variant="body2" color="text.secondary">
             Total Value
           </Typography>
-          <Typography variant="h5">${totalValue.toLocaleString()}</Typography>
+          <Typography variant="h5">${formatCompactNumber(totalValue)}</Typography>
         </Paper>
 
-        <Paper sx={{ p: 2 }}>
+        <Paper sx={{
+          p: 2, background:
+            "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+          backdropFilter: "blur(8px)",
+        }}>
           <Typography variant="body2" color="text.secondary">
             Total P / L
           </Typography>
@@ -109,7 +160,7 @@ const PortfolioPage = () => {
             variant="h5"
             sx={{ color: totalPnl >= 0 ? "success.main" : "error.main" }}
           >
-            ${totalPnl.toLocaleString()}
+            {totalPnl >= 0 ? '+' : '-'}${formatCompactNumber(Math.abs(totalPnl))}
           </Typography>
         </Paper>
       </Box>
@@ -122,7 +173,11 @@ const PortfolioPage = () => {
         }}
       >
         <Box sx={{ flex: "0 0 400px", minWidth: 0 }}>
-          <Paper sx={{ p: 3 }}>
+          <Paper sx={{
+            p: 3, background:
+              "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+            backdropFilter: "blur(8px)",
+          }}>
             <Typography variant="h6" gutterBottom>
               Portfolio Allocation
             </Typography>
@@ -168,14 +223,26 @@ const PortfolioPage = () => {
           </Paper>
         </Box>
 
-        <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Box sx={{ flex: 1, minWidth: 0, }}>
           <TableContainer
             component={Paper}
             sx={{
               overflowX: "auto",
+              background:
+                "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+              backdropFilter: "blur(8px)",
             }}
           >
-            <Table size="small">
+            <Table size="small" sx={{ tableLayout: "fixed" }}>
+              <colgroup>
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "19%" }} />
+                <col style={{ width: "14%" }} />
+                <col style={{ width: "14%" }} />
+                <col style={{ width: "13%" }} />
+                <col style={{ width: "14%" }} />
+                <col style={{ width: "6%" }} />
+              </colgroup>
               <TableHead>
                 <TableRow>
                   <TableCell>Coin</TableCell>
@@ -188,8 +255,8 @@ const PortfolioPage = () => {
                     sx={{ display: { xs: "none", md: "table-cell" } }}
                   >
                     P/L %
-                  </TableCell>{" "}
-                  <TableCell />
+                  </TableCell>
+                  <TableCell align="center" />
                 </TableRow>
               </TableHead>
 
@@ -224,44 +291,143 @@ const PortfolioPage = () => {
                       </Stack>
                     </TableCell>
 
-                    <TableCell align="right">{item.amount}</TableCell>
-
                     <TableCell align="right">
-                      ${item.price.toLocaleString()}
+                      {editingCoinId === item.coinId ? (
+                        <TextField
+                          value={editAmount}
+                          onChange={(e) => setEditAmount(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              handleSaveEdit(item.coinId, item.price);
+                            } else if (e.key === "Escape") {
+                              handleCancelEdit();
+                            }
+                          }}
+                          onBlur={() => {
+                            const newAmount = parseFloat(editAmount);
+                            if (!isNaN(newAmount) && newAmount > 0) {
+                              handleSaveEdit(item.coinId, item.price);
+                            } else {
+                              handleCancelEdit();
+                            }
+                          }}
+                          size="small"
+                          type="number"
+                          autoFocus
+                          placeholder={`0.00001 ${item.symbol}`}
+                          sx={{
+                            width: "100%",
+                            "& .MuiInputBase-root": {
+                              fontSize: "0.875rem",
+                            },
+                            "& input": {
+                              textAlign: "right",
+                              fontSize: "0.875rem",
+                              py: 0.5,
+                              px: 1,
+                            },
+                            "& input[type=number]": {
+                              MozAppearance: "textfield",
+                            },
+                            "& input[type=number]::-webkit-outer-spin-button": {
+                              WebkitAppearance: "none",
+                            },
+                            "& input[type=number]::-webkit-inner-spin-button": {
+                              WebkitAppearance: "none",
+                            },
+                          }}
+                          inputProps={{ min: 0, step: "any" }}
+                        />
+                      ) : (
+                        <Box
+                          onClick={() => handleStartEdit(item.coinId, item.amount)}
+                          sx={{
+                            cursor: "pointer",
+                            py: 0.5,
+                            px: 1,
+                            borderRadius: 1,
+                            transition: "all 0.2s ease",
+                            "&:hover": {
+                              backgroundColor: "rgba(255, 255, 255, 0.05)",
+                              boxShadow: "0 0 0 1px rgba(255, 255, 255, 0.1)",
+                            },
+                          }}
+                        >
+                          {item.amount}
+                        </Box>
+                      )}
                     </TableCell>
 
                     <TableCell align="right">
-                      ${item.value.toLocaleString()}
+                      ${formatCompactNumber(item.price)}
                     </TableCell>
 
-                    <TableCell
-                      align="right"
-                      sx={{
-                        color: item.pnl >= 0 ? "success.main" : "error.main",
-                      }}
-                    >
-                      ${item.pnl.toLocaleString()}
+                    <TableCell align="right">
+                      ${formatCompactNumber(item.value)}
+                    </TableCell>
+
+                    <TableCell align="right">
+                      <Box
+                        component="span"
+                        sx={{
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                          fontWeight: 500,
+                          fontSize: 13,
+                          bgcolor:
+                            item.pnl >= 0
+                              ? "rgba(76,175,80,0.15)"
+                              : "rgba(244,67,54,0.15)",
+                          color: item.pnl >= 0 ? "success.main" : "error.main",
+                        }}
+                      >
+                        {item.pnl >= 0 ? '+' : '-'}${formatCompactNumber(Math.abs(item.pnl))}
+                      </Box>
                     </TableCell>
 
                     <TableCell
                       align="right"
                       sx={{
                         display: { xs: "none", md: "table-cell" },
-                        color: item.pnl >= 0 ? "success.main" : "error.main",
                       }}
                     >
-                      {item.pnlPercent.toFixed(2)}%
+                      <Box
+                        component="span"
+                        sx={{
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                          fontWeight: 500,
+                          fontSize: 13,
+                          bgcolor:
+                            item.pnl >= 0
+                              ? "rgba(76,175,80,0.15)"
+                              : "rgba(244,67,54,0.15)",
+                          color: item.pnl >= 0 ? "success.main" : "error.main",
+                        }}
+                      >
+                        {item.pnlPercent.toFixed(2)}%
+                      </Box>
                     </TableCell>
 
-                    <TableCell align="right">
-                      <Button
-                        color="error"
+                    <TableCell align="center" sx={{ p: 0.5 }}>
+                      <IconButton
                         onClick={() =>
                           dispatch(removeFromPortfolio(item.coinId))
                         }
+                        size="small"
+                        sx={{
+                          color: "text.secondary",
+                          p: 0.5,
+                          "&:hover": {
+                            color: "text.primary",
+                            backgroundColor: "rgba(255, 255, 255, 0.08)",
+                          },
+                        }}
                       >
-                        Remove
-                      </Button>
+                        <DeleteIcon sx={{ fontSize: 18 }} />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

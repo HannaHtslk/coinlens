@@ -20,7 +20,7 @@ export const formatCompactNumber = (value: number): string => {
     return `${(value / 1_000).toFixed(2)}K`;
   }
 
-  return value.toString();
+  return value.toFixed(2);
 };
 
 const STABLECOINS = new Set([
