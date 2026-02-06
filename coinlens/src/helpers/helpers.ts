@@ -45,14 +45,10 @@ export const chartColors = [
   "#C5504B",
 ];
 
-const FIAT = new Set(["usd", "eur", "gbp", "jpy", "cny"]);
-
 export const isStableCoin = (symbol: string) =>
   STABLECOINS.has(symbol.toLowerCase());
 
-export const isFiat = (symbol: string) => FIAT.has(symbol.toLowerCase());
-
-export type MarketFilter = "all" | "favorites" | "crypto" | "stable" | "fiat";
+export type MarketFilter = "all" | "favorites" | "crypto" | "stable";
 
 export type SortKey = "price" | "marketCap" | "change24h" | "volume";
 export type SortDirection = "asc" | "desc";
@@ -88,12 +84,9 @@ export const filterCoinsByMarketType = (
     case "stable":
       return coins.filter((coin) => isStableCoin(coin.symbol));
 
-    case "fiat":
-      return coins.filter((coin) => isFiat(coin.symbol));
-
     case "crypto":
       return coins.filter(
-        (coin) => !isStableCoin(coin.symbol) && !isFiat(coin.symbol)
+        (coin) => !isStableCoin(coin.symbol)
       );
 
     case "all":

@@ -66,7 +66,6 @@ export const Filters = ({ search, setSearch, setPage, marketFilter, setMarketFil
                     <ToggleButton value="favorites">Favorites</ToggleButton>
                     <ToggleButton value="crypto">Crypto</ToggleButton>
                     <ToggleButton value="stable">Stable</ToggleButton>
-                    <ToggleButton value="fiat">Fiat</ToggleButton>
                 </ToggleButtonGroup>
             </Stack>
         </Paper>

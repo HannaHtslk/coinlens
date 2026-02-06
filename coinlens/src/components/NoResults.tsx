@@ -8,11 +8,9 @@ export const NoResults = ({ marketFilter }: { marketFilter: string }) => {
             </Typography>
 
             <Typography color="text.secondary" sx={{ fontSize: { xs: "0.875rem", md: "1rem" } }}>
-                {marketFilter === "fiat"
-                    ? "There are no fiat assets available in the current market data."
-                    : marketFilter === "favorites"
-                        ? "You haven’t added any favorites yet."
-                        : "Try adjusting your filters or search term."}
+                {marketFilter === "favorites"
+                    ? "You haven't added any favorites yet."
+                    : "Try adjusting your filters or search term."}
             </Typography>
         </Paper>
     );
