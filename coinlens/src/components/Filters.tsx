@@ -7,8 +7,8 @@ export const Filters = ({ search, setSearch, setPage, marketFilter, setMarketFil
     return (
         <Paper
             sx={{
-                p: 2,
-                mb: 3,
+                p: { xs: 1.5, sm: 2 },
+                mb: { xs: 2, md: 3 },
                 borderRadius: 3,
                 border: "1px solid",
                 borderColor: "divider",
@@ -18,7 +18,10 @@ export const Filters = ({ search, setSearch, setPage, marketFilter, setMarketFil
                 backdropFilter: "blur(8px)",
             }}
         >
-            <Stack direction="row" spacing={2}>
+            <Stack 
+                direction={{ xs: "column", sm: "row" }} 
+                spacing={2}
+            >
                 <TextField
                     label="Search coin"
                     variant="outlined"
@@ -28,6 +31,8 @@ export const Filters = ({ search, setSearch, setPage, marketFilter, setMarketFil
                         setSearch(e.target.value);
                         setPage(1);
                     }}
+                    fullWidth
+                    sx={{ maxWidth: { sm: 240 } }}
                 />
                 <ToggleButtonGroup
                     value={marketFilter}
@@ -40,10 +45,13 @@ export const Filters = ({ search, setSearch, setPage, marketFilter, setMarketFil
                         setPendingPage(1);
                     }}
                     sx={{
+                        width: { xs: "100%", sm: "auto" },
+                        flexWrap: { xs: "wrap", sm: "nowrap" },
                         "& .MuiToggleButton-root": {
                             textTransform: "none",
-                            px: 2,
+                            px: { xs: 1.5, sm: 2 },
                             borderColor: "divider",
+                            flex: { xs: "1 1 auto", sm: "0 0 auto" },
                         },
                         "& .Mui-selected": {
                             backgroundColor: "primary.main",

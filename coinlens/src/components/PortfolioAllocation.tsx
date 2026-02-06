@@ -7,32 +7,36 @@ export const PortfolioAllocation = ({ pieData, renderPieLabel }: { pieData: any,
     const isDark = theme.palette.mode === "dark";
 
     return (
-        <Box sx={{ flex: "0 0 400px", minWidth: 0 }}>
+        <Box sx={{ 
+            flex: { xs: "1", md: "0 0 400px" }, 
+            minWidth: 0 
+        }}>
             <Paper sx={{
-                p: 3,
+                p: { xs: 2, sm: 2.5, md: 3 },
                 background: isDark
                     ? "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))"
                     : "linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0))",
                 backdropFilter: "blur(8px)",
             }}>
-                <Typography variant="h6" gutterBottom>
+                <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: "1.1rem", md: "1.25rem" } }}>
                     Portfolio Allocation
                 </Typography>
                 <Box
                     sx={{
                         width: "100%",
-                        height: { xs: 300, md: 450 },
+                        height: { xs: 320, sm: 360, md: 480 },
+                        position: "relative",
                     }}
                 >
                     <ResponsiveContainer>
-                        <PieChart>
+                        <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                             <Pie
                                 data={pieData}
                                 dataKey="value"
                                 nameKey="name"
                                 cx="50%"
-                                cy="45%"
-                                outerRadius={110}
+                                cy="42%"
+                                outerRadius="60%"
                                 label={renderPieLabel}
                             >
                                 {pieData.map((item: any, index: number) => (

@@ -15,36 +15,46 @@ export const PortfolioTable = ({ enrichedItems, navigate, marketMap, editingCoin
             component={Paper}
             sx={{
                 overflowX: "auto",
+                WebkitOverflowScrolling: "touch",
                 background: isDark
                     ? "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))"
                     : "linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0))",
                 backdropFilter: "blur(8px)",
             }}
         >
-            <Table size="small" sx={{ tableLayout: "fixed" }}>
-                <colgroup>
-                    <col style={{ width: "20%" }} />
-                    <col style={{ width: "19%" }} />
-                    <col style={{ width: "14%" }} />
-                    <col style={{ width: "14%" }} />
-                    <col style={{ width: "13%" }} />
-                    <col style={{ width: "14%" }} />
-                    <col style={{ width: "6%" }} />
-                </colgroup>
+            <Table size="small" sx={{
+                minWidth: { xs: 500, sm: 700, md: "100%" },
+                tableLayout: { xs: "auto", md: "fixed" },
+                "& th, & td": {
+                    px: { xs: 1, sm: 1.5, md: 2 },
+                    py: { xs: 1, sm: 1.5, md: 2 },
+                },
+            }}>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Coin</TableCell>
-                        <TableCell align="right">Amount</TableCell>
-                        <TableCell align="right">Price (USD)</TableCell>
-                        <TableCell align="right">Value (USD)</TableCell>
-                        <TableCell align="right">P/L (USD)</TableCell>
+                        <TableCell sx={{ width: { md: "20%" } }}>Coin</TableCell>
+                        <TableCell align="right" sx={{ width: { md: "19%" } }}>Amount</TableCell>
                         <TableCell
                             align="right"
-                            sx={{ display: { xs: "none", md: "table-cell" } }}
+                            sx={{
+                                display: { xs: "none", sm: "table-cell" },
+                                width: { md: "14%" }
+                            }}
+                        >
+                            Price (USD)
+                        </TableCell>
+                        <TableCell align="right" sx={{ width: { md: "14%" } }}>Value (USD)</TableCell>
+                        <TableCell align="right" sx={{ width: { md: "13%" } }}>P/L (USD)</TableCell>
+                        <TableCell
+                            align="right"
+                            sx={{
+                                display: { xs: "none", md: "table-cell" },
+                                width: { md: "14%" }
+                            }}
                         >
                             P/L %
                         </TableCell>
-                        <TableCell align="center" />
+                        <TableCell align="center" sx={{ width: { md: "6%" } }} />
                     </TableRow>
                 </TableHead>
 
@@ -146,7 +156,10 @@ export const PortfolioTable = ({ enrichedItems, navigate, marketMap, editingCoin
                                 )}
                             </TableCell>
 
-                            <TableCell align="right">
+                            <TableCell
+                                align="right"
+                                sx={{ display: { xs: "none", sm: "table-cell" } }}
+                            >
                                 ${formatCompactNumber(item.price)}
                             </TableCell>
 

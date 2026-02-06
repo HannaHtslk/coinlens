@@ -67,15 +67,19 @@ const CoinPage = () => {
     <Box>
       <Paper
         sx={{
-          p: 3,
+          p: { xs: 2, sm: 2.5, md: 3 },
           background: isDark
             ? "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))"
             : "linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0))",
           backdropFilter: "blur(8px)",
         }}
       >
-        <Stack direction="row" spacing={4} alignItems="stretch">
-          <Box sx={{ flex: "0 0 35%" }} >
+        <Stack 
+          direction={{ xs: "column", lg: "row" }} 
+          spacing={{ xs: 3, lg: 4 }} 
+          alignItems="stretch"
+        >
+          <Box sx={{ flex: { xs: "1", lg: "0 0 35%" } }} >
             <CoinInfo data={data} amount={amount} setAmount={setAmount} justAdded={justAdded} setJustAdded={setJustAdded} dispatch={dispatch} id={id!} />
           </Box>
 
@@ -85,6 +89,7 @@ const CoinPage = () => {
                 variant={days === 7 ? "contained" : "outlined"}
                 disabled={days === 7}
                 onClick={() => setDays(7)}
+                size="small"
               >
                 7d
               </Button>
@@ -93,12 +98,13 @@ const CoinPage = () => {
                 variant={days === 30 ? "contained" : "outlined"}
                 disabled={days === 30}
                 onClick={() => setDays(30)}
+                size="small"
               >
                 30d
               </Button>
             </Stack>
 
-            <Box sx={{ width: "100%", height: 320 }}>
+            <Box sx={{ width: "100%", height: { xs: 250, sm: 300, md: 320 } }}>
               {isChartLoading ? (
                 <Typography>Loading chart...</Typography>
               ) : (

@@ -127,7 +127,8 @@ const DashboardPage = () => {
             background: isDark
               ? "linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0))"
               : "linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0))",
-            overflow: "hidden",
+            overflowX: "auto",
+            WebkitOverflowScrolling: "touch",
           }}
         >
           <CoinsTable filteredAndSortedData={filteredAndSortedData} isLoading={isLoading} sortConfig={{ key: sortConfig.key ?? "", direction: sortConfig.direction ?? "asc" }} handleSort={handleSort} favoriteIds={favoriteIds} dispatch={dispatch} navigate={navigate} />
@@ -148,6 +149,12 @@ const DashboardPage = () => {
               page={filteredPage}
               count={totalFilteredPages}
               onChange={(_, value) => setFilteredPage(value)}
+              size="medium"
+              sx={{
+                "& .MuiPaginationItem-root": {
+                  fontSize: { xs: "0.875rem", md: "1rem" }
+                }
+              }}
             />
           )
         ) : (
@@ -157,6 +164,12 @@ const DashboardPage = () => {
               count={pendingPage + (hasNextPage ? 1 : 0)}
               onChange={(_, value) => setPendingPage(value)}
               disabled={isLoading}
+              size="medium"
+              sx={{
+                "& .MuiPaginationItem-root": {
+                  fontSize: { xs: "0.875rem", md: "1rem" }
+                }
+              }}
             />
           </>
         )}

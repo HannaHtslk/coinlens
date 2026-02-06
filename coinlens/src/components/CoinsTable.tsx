@@ -11,18 +11,21 @@ import { toggleFavorite } from "../redux/favorites/favoritesSlice";
 export const CoinsTable = ({ filteredAndSortedData, isLoading, sortConfig, handleSort, favoriteIds, dispatch, navigate }: { filteredAndSortedData: CoinMarket[], isLoading: boolean, sortConfig: { key: string, direction: "asc" | "desc" }, handleSort: (key: string) => void, favoriteIds: string[], dispatch: Dispatch, navigate: NavigateFunction }) => {
     return (
         <Table sx={{
-            tableLayout: "fixed",
+            minWidth: { xs: 500, sm: 900, md: "100%" },
+            tableLayout: { xs: "auto", md: "fixed" },
             "& th, & td": {
                 whiteSpace: "nowrap",
+                px: { xs: 1, md: 2 },
+                py: { xs: 1.5, md: 2 },
             },
         }}>
             <TableHead>
                 <TableRow>
                     <TableCell padding="checkbox" sx={{ width: 48 }}></TableCell>
-                    <TableCell sx={{ width: 240 }}>Coin</TableCell>
+                    <TableCell sx={{ width: { xs: 160, md: 240 } }}>Coin</TableCell>
                     <TableCell
                         align="right"
-                        sx={{ width: 140 }}
+                        sx={{ width: { xs: 100, md: 140 } }}
                         sortDirection={
                             sortConfig.key === "price"
                                 ? (sortConfig.direction ?? undefined)
@@ -43,7 +46,7 @@ export const CoinsTable = ({ filteredAndSortedData, isLoading, sortConfig, handl
                     </TableCell>
                     <TableCell
                         align="right"
-                        sx={{ width: 100 }}
+                        sx={{ width: { xs: 80, md: 100 } }}
                         sortDirection={
                             sortConfig.key === "change24h"
                                 ? (sortConfig.direction ?? undefined)
@@ -64,7 +67,10 @@ export const CoinsTable = ({ filteredAndSortedData, isLoading, sortConfig, handl
                     </TableCell>
                     <TableCell
                         align="right"
-                        sx={{ width: 160 }}
+                        sx={{ 
+                            width: { xs: 120, md: 160 },
+                            display: { xs: "none", sm: "table-cell" }
+                        }}
                         sortDirection={
                             sortConfig.key === "volume"
                                 ? (sortConfig.direction ?? undefined)
@@ -86,7 +92,10 @@ export const CoinsTable = ({ filteredAndSortedData, isLoading, sortConfig, handl
 
                     <TableCell
                         align="right"
-                        sx={{ width: 160 }}
+                        sx={{ 
+                            width: { xs: 120, md: 160 },
+                            display: { xs: "none", sm: "table-cell" }
+                        }}
                         sortDirection={
                             sortConfig.key === "marketCap"
                                 ? (sortConfig.direction ?? undefined)
@@ -196,10 +205,16 @@ export const CoinsTable = ({ filteredAndSortedData, isLoading, sortConfig, handl
                                 </Box>
                             </TableCell>
 
-                            <TableCell align="right">
+                            <TableCell 
+                                align="right"
+                                sx={{ display: { xs: "none", sm: "table-cell" } }}
+                            >
                                 ${formatCompactNumber(coin.total_volume)}
                             </TableCell>
-                            <TableCell align="right">
+                            <TableCell 
+                                align="right"
+                                sx={{ display: { xs: "none", sm: "table-cell" } }}
+                            >
                                 ${formatCompactNumber(coin.market_cap)}
                             </TableCell>
                         </TableRow>

@@ -25,13 +25,13 @@ const Layout = () => {
         backdropFilter: "blur(8px)",
       }}
     >
-      <Toolbar sx={{ minHeight: 72, px: 4 }}>
+      <Toolbar sx={{ minHeight: { xs: 56, md: 72 }, px: { xs: 2, sm: 3, md: 4 } }}>
         <Typography
           component={NavLink}
           to="/dashboard"
           sx={{
             mr: "auto",
-            fontSize: "1rem",
+            fontSize: { xs: "0.9rem", md: "1rem" },
             fontWeight: 700,
             color: "text.primary",
             textDecoration: "none",
@@ -44,7 +44,7 @@ const Layout = () => {
           Coin<span style={{ fontWeight: 400 }}>Lens</span>
         </Typography>
 
-        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+        <Box sx={{ display: "flex", gap: { xs: 0.5, md: 1 }, alignItems: "center" }}>
           {[
             { label: "Dashboard", to: "/dashboard" },
             { label: "Portfolio", to: "/portfolio" },
@@ -55,11 +55,12 @@ const Layout = () => {
               to={to}
               sx={{
                 color: "text.primary",
-                px: 3,
-                py: 1.2,
+                px: { xs: 1.5, sm: 2, md: 3 },
+                py: { xs: 0.8, md: 1.2 },
                 borderRadius: 2,
                 fontWeight: 500,
                 textTransform: "none",
+                fontSize: { xs: "0.875rem", md: "1rem" },
 
                 "&.active": {
                   backgroundColor:
