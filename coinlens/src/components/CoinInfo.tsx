@@ -89,13 +89,9 @@ export const CoinInfo = ({ data, amount, setAmount, justAdded, setJustAdded, dis
                             sx={{ mt: 1 }}
                         >
                             Total cost: $
-                            {(
-                                data.market_data.current_price.usd *
-                                parseFloat(amount)
-                            ).toLocaleString(undefined, {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            })}
+                            {formatCompactNumber(
+                                data.market_data.current_price.usd * parseFloat(amount)
+                            )}
                         </Typography>
                     )}
             </Box>

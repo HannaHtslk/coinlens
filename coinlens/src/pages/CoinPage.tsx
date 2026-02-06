@@ -24,6 +24,7 @@ import {
 } from "recharts";
 import { CoinPageSkeleton } from "../components/CoinPageSkeleton";
 import { CoinInfo } from "../components/CoinInfo";
+import { formatCompactNumber } from "../helpers/helpers";
 
 const CoinPage = () => {
   const dispatch = useAppDispatch();
@@ -105,7 +106,17 @@ const CoinPage = () => {
                   <LineChart data={prices}>
                     <XAxis dataKey="time" hide />
                     <YAxis domain={["auto", "auto"]} />
-                    <Tooltip />
+                    <Tooltip
+                      formatter={(value?: number) => 
+                        value !== undefined ? `$${formatCompactNumber(value)}` : ""
+                      }
+                      labelStyle={{ color: "#000" }}
+                      contentStyle={{
+                        backgroundColor: "rgba(255, 255, 255, 0.95)",
+                        border: "1px solid #ccc",
+                        borderRadius: "4px",
+                      }}
+                    />
                     <Line
                       type="monotone"
                       dataKey="price"
