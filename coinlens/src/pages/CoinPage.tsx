@@ -7,6 +7,7 @@ import {
   Button,
   Paper,
   Stack,
+  useTheme,
 } from "@mui/material";
 
 import {
@@ -26,6 +27,8 @@ import { CoinInfo } from "../components/CoinInfo";
 
 const CoinPage = () => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
 
   const { id } = useParams<{ id: string }>();
   const [days, setDays] = useState<7 | 30>(7);
@@ -64,8 +67,9 @@ const CoinPage = () => {
       <Paper
         sx={{
           p: 3,
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+          background: isDark
+            ? "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))"
+            : "linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0))",
           backdropFilter: "blur(8px)",
         }}
       >

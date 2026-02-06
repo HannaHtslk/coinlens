@@ -7,6 +7,7 @@ import {
   TableContainer,
   Paper,
   Pagination,
+  useTheme,
 } from "@mui/material";
 
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -24,6 +25,8 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const favoriteIds = useAppSelector((state) => state.favorites.ids);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
 
   const PER_PAGE = 20;
   const FILTERED_PER_PAGE = 250;
@@ -121,8 +124,9 @@ const DashboardPage = () => {
             borderRadius: 3,
             border: "1px solid",
             borderColor: "divider",
-            background:
-              "linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0))",
+            background: isDark
+              ? "linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0))"
+              : "linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0))",
             overflow: "hidden",
           }}
         >

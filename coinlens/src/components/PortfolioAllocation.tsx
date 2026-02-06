@@ -1,14 +1,18 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography, useTheme } from "@mui/material";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { chartColors, formatCompactNumber } from "../helpers/helpers";
 
 export const PortfolioAllocation = ({ pieData, renderPieLabel }: { pieData: any, renderPieLabel: any }) => {
+    const theme = useTheme();
+    const isDark = theme.palette.mode === "dark";
 
     return (
         <Box sx={{ flex: "0 0 400px", minWidth: 0 }}>
             <Paper sx={{
-                p: 3, background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+                p: 3,
+                background: isDark
+                    ? "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))"
+                    : "linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0))",
                 backdropFilter: "blur(8px)",
             }}>
                 <Typography variant="h6" gutterBottom>

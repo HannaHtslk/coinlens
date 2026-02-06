@@ -1,7 +1,13 @@
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography, useTheme } from "@mui/material";
 import { formatCompactNumber } from "../helpers/helpers";
 
 export const ProfitLossSection = ({ totalValue, totalPnl }: { totalValue: number, totalPnl: number }) => {
+    const theme = useTheme();
+    const isDark = theme.palette.mode === "dark";
+    const paperBg = isDark
+        ? "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))"
+        : "linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0))";
+
     return (
         <Box
             sx={{
@@ -12,8 +18,8 @@ export const ProfitLossSection = ({ totalValue, totalPnl }: { totalValue: number
             }}
         >
             <Paper sx={{
-                p: 2, background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+                p: 2,
+                background: paperBg,
                 backdropFilter: "blur(8px)",
             }}>
                 <Typography variant="body2" color="text.secondary">
@@ -23,8 +29,8 @@ export const ProfitLossSection = ({ totalValue, totalPnl }: { totalValue: number
             </Paper>
 
             <Paper sx={{
-                p: 2, background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+                p: 2,
+                background: paperBg,
                 backdropFilter: "blur(8px)",
             }}>
                 <Typography variant="body2" color="text.secondary">
@@ -42,6 +48,9 @@ export const ProfitLossSection = ({ totalValue, totalPnl }: { totalValue: number
 };
 
 export const EmptyPortfolio = ({ navigate }: { navigate: any }) => {
+    const theme = useTheme();
+    const isDark = theme.palette.mode === "dark";
+
     return (
         <Box>
             <Typography variant="h4" gutterBottom>
@@ -55,13 +64,16 @@ export const EmptyPortfolio = ({ navigate }: { navigate: any }) => {
                 onClick={() => navigate("/")}
                 sx={{
                     mt: 2,
-                    background:
-                        "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+                    background: isDark
+                        ? "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))"
+                        : "linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0))",
                     backdropFilter: "blur(8px)",
                     color: "text.primary",
+                    transition: "all 0.3s ease",
                     "&:hover": {
-                        background:
-                            "linear-gradient(180deg, rgba(255, 255, 255, 0.33), rgba(255,255,255,0))",
+                        background: isDark
+                            ? "linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255,255,255,0))"
+                            : "linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0,0,0,0))",
                     },
                 }}
             >

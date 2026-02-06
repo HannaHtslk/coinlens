@@ -1,6 +1,9 @@
-import { Paper, Stack, TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Paper, Stack, TextField, ToggleButton, ToggleButtonGroup, useTheme } from "@mui/material";
 
 export const Filters = ({ search, setSearch, setPage, marketFilter, setMarketFilter, setPendingPage }: { search: string, setSearch: (search: string) => void, setPage: (page: number) => void, marketFilter: string, setMarketFilter: (marketFilter: string) => void, setPendingPage: (pendingPage: number) => void }) => {
+    const theme = useTheme();
+    const isDark = theme.palette.mode === "dark";
+
     return (
         <Paper
             sx={{
@@ -9,8 +12,9 @@ export const Filters = ({ search, setSearch, setPage, marketFilter, setMarketFil
                 borderRadius: 3,
                 border: "1px solid",
                 borderColor: "divider",
-                background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+                background: isDark
+                    ? "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))"
+                    : "linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0))",
                 backdropFilter: "blur(8px)",
             }}
         >

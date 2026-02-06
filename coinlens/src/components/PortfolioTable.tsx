@@ -1,4 +1,4 @@
-import { Avatar, Box, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
+import { Avatar, Box, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, useTheme } from "@mui/material";
 import { formatCompactNumber, getFallbackLetter } from "../helpers/helpers";
 import { removeFromPortfolio } from "../redux/portfolio/portfolioSlice";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -7,13 +7,17 @@ import { useAppDispatch } from "../store/hooks";
 
 export const PortfolioTable = ({ enrichedItems, navigate, marketMap, editingCoinId, editAmount, setEditAmount, handleSaveEdit, handleCancelEdit, handleStartEdit }: { enrichedItems: any, navigate: any, marketMap: any, editingCoinId: any, editAmount: any, setEditAmount: any, handleSaveEdit: any, handleCancelEdit: any, handleStartEdit: any }) => {
     const dispatch = useAppDispatch();
+    const theme = useTheme();
+    const isDark = theme.palette.mode === "dark";
+
     return (
         <TableContainer
             component={Paper}
             sx={{
                 overflowX: "auto",
-                background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))",
+                background: isDark
+                    ? "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0))"
+                    : "linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0))",
                 backdropFilter: "blur(8px)",
             }}
         >
