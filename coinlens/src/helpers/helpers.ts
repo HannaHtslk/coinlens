@@ -34,6 +34,17 @@ const STABLECOINS = new Set([
   "frax",
 ]);
 
+export const chartColors = [
+  "#5B9BD5",
+  "#70AD47",
+  "#FFC000",
+  "#9E7BB5",
+  "#4BACC6",
+  "#F79646",
+  "#8E8E8E",
+  "#C5504B",
+];
+
 const FIAT = new Set(["usd", "eur", "gbp", "jpy", "cny"]);
 
 export const isStableCoin = (symbol: string) =>
